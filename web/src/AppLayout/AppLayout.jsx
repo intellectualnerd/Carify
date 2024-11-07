@@ -12,7 +12,7 @@ const AppLayout = () => {
         const timer = setTimeout(() => {
             setAnimation("animationStart");
             setIsLoading(false);
-        }, 500);
+        }, 1500);
 
         // Clean up the timer on component unmount
         return () => clearTimeout(timer);

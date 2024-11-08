@@ -2,21 +2,25 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
 const Signup = () => {
     const [role, setRole] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
     const [formData, setFormData] = useState({
         name: '',
         phone_no: '',
         location: '',
+        password: '',
         email: '',
     });
     const [doctorData, setDoctorData] = useState({
-        did: '',
+
         experience: '',
         speciality: '',
     });
     const [patientData, setPatientData] = useState({
-        pid: '',
+    
         age: '',
         gender: '',
     });
@@ -25,12 +29,25 @@ const Signup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const data = role === 'doctor' ? { ...formData, ...doctorData, role } : { ...formData, ...patientData, role };
-        await fetch('/api/signup', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-        });
+        if (formData.password != confirmPassword){
+            alert("Password And Confirm password Does not matches!");
+            return ;
+        }
+        const data = role === 'doctor' ? { ...formData, ...doctorData } : { ...formData, ...patientData };
+        let url=role=='doctor'?"Doctor_Register":"Patient_Register";
+       
+ try {
+            const response = await axios.post(`http://localhost:8000/${url}/`, data);
+       
+          
+        } catch (error) {
+            console.error('Error Signup :', error);
+            alert('Failed to  Register. Please try again.');
+            return ;
+        }
+        
+      
+     
         navigate('/login');
     };
 
@@ -109,19 +126,10 @@ const Signup = () => {
                             required
                         />
                     </div>
-                    
+                 
                     {role === 'doctor' && (
                         <>
-                            <div className="form-group mb-3">
-                                <label>Doctor ID</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    name="did"
-                                    value={doctorData.did}
-                                    onChange={(e) => handleChange(e, setDoctorData)}
-                                />
-                            </div>
+                         
                             <div className="form-group mb-3">
                                 <label>Experience (Years)</label>
                                 <input
@@ -173,7 +181,28 @@ const Signup = () => {
                             </div>
                         </>
                     )}
-                    
+                           <div className="form-group mb-3">
+                        <label>Password</label>
+                        <input
+                            type="password"
+                            className="form-control"
+                            name="password"
+                            value={formData.password}
+                            onChange={(e) => handleChange(e, setFormData)}
+                            required
+                        />
+                    </div>
+                     <div className="form-group mb-3">
+                        <label>Confirm Password:</label>
+                        <input
+                            type="password"
+                            className="form-control"
+                            name="confirmpassword"
+                            value={confirmPassword}
+                            onChange={(e) =>setConfirmPassword(e.target.value)}
+                            required
+                        />
+                    </div>
                     <button type="submit" className="btn btn-primary w-100">Sign Up</button>
                     <p className="text-center mt-3">
                         Already have an account? <a href="/login">Sign in</a>

@@ -1,11 +1,25 @@
 // Home.js
-import React from 'react';
+import React,{useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import doc_profile from './doctor.png';
-
+import axios from 'axios';
 const Home = () => {
     const isDoctor = true;
+const handleSubmit = async () => {
 
+     
+       
+        try {
+            const response = await axios.get('http://localhost:8000/getInfo/',{withCredentials:true});
+          console.log(response)
+        } catch (error) {
+            console.error('Error loging :', error);
+            // alert('Failed to login . Please try again.');
+        }
+    };
+    useEffect(()=>{
+        handleSubmit()
+    },[])
     return (
         <>
             {isDoctor && (

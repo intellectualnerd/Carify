@@ -2,25 +2,25 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import axios  from 'axios';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('');
+    const [role, setRole] = useState('patient');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        const response = await fetch('/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password, role }),
-        });
-        const data = await response.json();
+      
+        try {
+         const    response = await axios.post('http://localhost:8000/Login/', {email:email,password:password,role:role},{withCredentials:true});
+        
+               const data =  response.data;
 
-        if (data.success) {
-            // Set cookies and navigate to home if login is successful
+        if (data.Success) {
+          
             Cookies.set('email', email, { expires: 1 });
             Cookies.set('password', password, { expires: 1 });
             Cookies.set('role', role, { expires: 1 });
@@ -28,6 +28,12 @@ const Login = () => {
         } else {
             setError('Invalid credentials. Please try again.');
         }
+
+        } catch (error) {
+            console.error('Error loging :', error);
+            alert('Failed to login . Please try again.');
+        }
+    
     };
 
     return (
@@ -266,7 +272,7 @@ const Login = () => {
                                 onChange={(e) => setRole(e.target.value)}
                                 required
                             >
-                                <option value="">Select Role</option>
+                         
                                 <option value="doctor">Doctor</option>
                                 <option value="patient">Patient</option>
                             </select>

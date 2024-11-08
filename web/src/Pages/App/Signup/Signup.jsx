@@ -65,7 +65,7 @@ const Signup = () => {
             </div>
 
             {/* Right Column for Signup Form */}
-            <div className="col-md-6" style={{maxHeight:"100vh", overflowY:"scroll"}}>
+            <div className="col-md-6" style={{maxHeight:"100vh", overflowY:"scroll", padding:"70px"}}>
                 <form onSubmit={handleSubmit} className="p-4 py-5 mb-5 shadow-sm rounded bg-light">
                     <h2 className="text-center mb-4">Signup</h2>
 

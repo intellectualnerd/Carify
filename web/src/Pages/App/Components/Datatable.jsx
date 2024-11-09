@@ -122,6 +122,24 @@ setSelectedDate(date);
 const formattedDate = date.toISOString().split('T')[0]; 
 const slotData=await getSlots(doctorId)
 console.log(slotData)
+let sidArray=[]
+slotData.forEach((e)=>{
+  sidArray.push(e[1])
+})
+ try {
+    const response = await axios.post('http://localhost:8000/checkAvailibility/', {
+        doctorId: selectedDoctorId,
+        date:formattedDate,
+        sidArray:sidArray
+
+      },
+      {withCredentials: true,
+    });
+    return response.data; 
+  } catch (error) {
+    console.error("Error fetching slots:", error.response ? error.response.data : error.message);
+    
+  }
 
   }
 

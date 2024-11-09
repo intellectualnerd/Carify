@@ -24,15 +24,18 @@ const Chatbot = () => {
         // Add user's message to chat history
         const newPatientMessage = { sender: "patient", message: inputText };
         setChatHistory((prev) => [...prev, newPatientMessage]);
+        setInputText("");
 
         try {
             // Send request to the backend and get response
-            const response = await axios.post("/api/chatbot", { message: inputText });
-            const botMessage = response.data.reply || "I'm here to help you.";
-
+            const response = await axios.post("http://localhost:8000/chatResponse/", { message: inputText });
+            console.log(response)
+            const botMessage = response.data.response || "I'm here to help you.";
+            
             // Add bot's response to chat history
             const newBotMessage = { sender: "bot", message: botMessage };
             setChatHistory((prev) => [...prev, newBotMessage]);
+
         } catch (error) {
             console.error("Error fetching bot response:", error);
             const errorMessage = { sender: "bot", message: "There was an error. Please try again." };
@@ -40,14 +43,13 @@ const Chatbot = () => {
         }
 
         // Clear input field
-        setInputText("");
     };
 
     return (
         <>
             <Patientnav activeName="Chatbot" />
             <div className="container">
-                <p className="mytitle mt-3" style={{ color: "var(--Carify-black)" }}>Chatbot :</p>
+                <p className="mytitle mt-3" style={{ color: "var(--Carify-black)" }}>CareBuddy :</p>
                 <div className="chatbotdiv">
                     <div className="chat">
                         {chatHistory.map((chat, index) => (

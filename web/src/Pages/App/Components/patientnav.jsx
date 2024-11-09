@@ -14,13 +14,13 @@ const Nav = ({ activeName }) => {
                                 <a className={`nav-link ${activeName === "Appoint" ? "active" : ""}`} href="/">Appoint</a>
                             </li>
                             <li className="nav-item me-3">
-                                <a className={`nav-link ${activeName === "Mental-test" ? "active" : ""}`} href="/mental-test">Mental-test</a>
+                                <a className={`nav-link ${activeName === "Mental-Test" ? "active" : ""}`} href="/mental-test">Mental-Test</a>
                             </li>
                             <li className="nav-item me-3">
                                 <a className={`nav-link ${activeName === "Chatbot" ? "active" : ""}`} href="/chatbot">Chatbot</a>
                             </li>
                             <li className="nav-item me-3">
-                                <a className={`nav-link ${activeName === "Report-analysis" ? "active" : ""}`} href="/report-analysis">Report-analysis</a>
+                                <a className={`nav-link ${activeName === "Report-Analysis" ? "active" : ""}`} href="/report-analysis">Report-Analysis</a>
                             </li>
                             <li className="nav-item d-flex align-items-center">
                                 <a className={`nav-link ${activeName === "Profile" ? "active" : ""}`} href="/profile/patient">

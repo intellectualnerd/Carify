@@ -1,15 +1,46 @@
 import React, { useState } from "react";
+import axios from "axios";
 import Patientnav from "../Components/patientnav";
 
 const Chatbot = () => {
     const [inputText, setInputText] = useState("");
+    const [chatHistory, setChatHistory] = useState([
+        { sender: "bot", message: "Hi, I am your consultant for today. Can you tell me how you feel today so I can help you further in life." }
+    ]);
 
     const handleInputChange = (event) => {
         setInputText(event.target.value);
     };
 
-    const handleButtonClick = () => {
-        console.log("Input Text:", inputText);
+    const handleKeyPress = (event) => {
+        if (event.key === "Enter") {
+            handleButtonClick();
+        }
+    };
+
+    const handleButtonClick = async () => {
+        if (inputText.trim() === "") return;
+
+        // Add user's message to chat history
+        const newPatientMessage = { sender: "patient", message: inputText };
+        setChatHistory((prev) => [...prev, newPatientMessage]);
+
+        try {
+            // Send request to the backend and get response
+            const response = await axios.post("/api/chatbot", { message: inputText });
+            const botMessage = response.data.reply || "I'm here to help you.";
+
+            // Add bot's response to chat history
+            const newBotMessage = { sender: "bot", message: botMessage };
+            setChatHistory((prev) => [...prev, newBotMessage]);
+        } catch (error) {
+            console.error("Error fetching bot response:", error);
+            const errorMessage = { sender: "bot", message: "There was an error. Please try again." };
+            setChatHistory((prev) => [...prev, errorMessage]);
+        }
+
+        // Clear input field
+        setInputText("");
     };
 
     return (
@@ -19,11 +50,13 @@ const Chatbot = () => {
                 <p className="mytitle mt-3" style={{ color: "var(--Carify-black)" }}>Chatbot :</p>
                 <div className="chatbotdiv">
                     <div className="chat">
-                        <div className="patientchatdiv">
-                            <div className="patientchat">
-                                hkbh
+                        {chatHistory.map((chat, index) => (
+                            <div key={index} className={chat.sender === "patient" ? "patientchatdiv" : "botchatdiv"}>
+                                <div className={chat.sender === "patient" ? "patientchat" : "botchat"}>
+                                    {chat.message}
+                                </div>
                             </div>
-                        </div>
+                        ))}
                     </div>
                     <div className="search-container">
                         <div className="searchbar">
@@ -31,6 +64,7 @@ const Chatbot = () => {
                                 type="text"
                                 value={inputText}
                                 onChange={handleInputChange}
+                                onKeyPress={handleKeyPress}
                                 placeholder="Type your message..."
                                 style={{
                                     width: "100%",

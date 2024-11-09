@@ -20,7 +20,7 @@ const Nav = ({ activeName }) => {
                                 <a className={`nav-link ${activeName === "Chatbot" ? "active" : ""}`} href="/chatbot">Chatbot</a>
                             </li>
                             <li className="nav-item me-3">
-                                <a className={`nav-link ${activeName === "Report-analysis" ? "active" : ""}`} href="/patient_info">Report-analysis</a>
+                                <a className={`nav-link ${activeName === "Report-analysis" ? "active" : ""}`} href="/report-analysis">Report-analysis</a>
                             </li>
                             <li className="nav-item d-flex align-items-center">
                                 <a className={`nav-link ${activeName === "Profile" ? "active" : ""}`} href="/profile">

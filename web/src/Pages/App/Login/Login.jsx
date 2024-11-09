@@ -231,7 +231,7 @@ const Login = () => {
                 </div>
 
                 {/* Right Column for Login Form */}
-                <div className="col-md-6">
+                <div className="col-md-6" style={{padding:"70px"}}>
                     <form onSubmit={handleLogin} className="p-4 py-5 mb-5 shadow-sm rounded bg-light">
                         <h2 className="text-center mb-4">Login</h2>
 

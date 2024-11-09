@@ -25,6 +25,9 @@ import Chatbot from './Pages/App/Chatbot/Chatbot';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import ReportAnalysis from './Pages/App/Report-analysis/reportAnalysis';
+import Profle from './Pages/App/Profile/Profile'
+import Schedule from './Pages/App/Schedule/Schecule';
+import Dashboard from './Pages/App/Dashboard/Dashboard';
 
 
 // router and routes
@@ -64,6 +67,21 @@ const router = createBrowserRouter([
         path: "/report-analysis",
         index: true,
         element: <ReportAnalysis />,
+      },
+      {
+        path: "/profile/patient",
+        index: true,
+        element: <Profle />,
+      },
+      {
+        path: "/schedule",
+        index: true,
+        element: <Schedule />,
+      },
+      {
+        path: "/dashboard",
+        index: true,
+        element: <Dashboard />,
       },
       {
         path: "*",

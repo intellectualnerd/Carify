@@ -23,7 +23,7 @@ const Nav = ({ activeName }) => {
                                 <a className={`nav-link ${activeName === "Report-Analysis" ? "active" : ""}`} href="/report-analysis">Report-Analysis</a>
                             </li>
                             <li className="nav-item d-flex align-items-center">
-                                <a className={`nav-link ${activeName === "Profile" ? "active" : ""}`} href="/profile">
+                                <a className={`nav-link ${activeName === "Profile" ? "active" : ""}`} href="/profile/patient">
                                     <img src={user_profile} alt="Profile" height="40px" className="rounded-circle" />
                                 </a>
                             </li>

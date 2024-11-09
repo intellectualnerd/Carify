@@ -1,8 +1,9 @@
 // Home.js
 import React,{useEffect} from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate ,Outlet} from 'react-router-dom';
 import doc_profile from './doctor.png';
 import axios from 'axios';
+
 const Home = () => {
     const isDoctor = true;
 const handleSubmit = async () => {
@@ -41,6 +42,10 @@ const handleSubmit = async () => {
                                     <a className="nav-link" href="/patient_info">Patients</a>
                                 </li>
                                 <li className="nav-item me-3">
+    <a className="nav-link" href="/assessment">Know Your Mental Health</a>
+</li>
+
+                                <li className="nav-item me-3">
                                     <a className="nav-link" href="/patient_info">Dashboard</a>
                                 </li>
                                 <li className="nav-item d-flex align-items-center">
@@ -53,7 +58,7 @@ const handleSubmit = async () => {
                     </div>
                 </nav>
             )}
-            {!isDoctor && <>Patient</>}
+           <Outlet/>
         </>
     );
 };

@@ -24,7 +24,7 @@ import Signup from './Pages/App/Signup/Signup';
 import Chatbot from './Pages/App/Chatbot/Chatbot';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-
+import ReportAnalysis from './Pages/App/Report-analysis/reportAnalysis';
 
 
 // router and routes
@@ -59,6 +59,11 @@ const router = createBrowserRouter([
         path: "/chatbot",
         index: true,
         element: <Chatbot />,
+      },
+      {
+        path: "/report-analysis",
+        index: true,
+        element: <ReportAnalysis />,
       },
       {
         path: "*",

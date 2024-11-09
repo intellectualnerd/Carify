@@ -104,6 +104,26 @@ const AppointmentModal = ({ show, onClose, doctorId }) => {
     alert("Appointment booked successfully!");
     onClose(); // Close modal after successful booking
   };
+  const getSlots = async (selectedDoctorId) => {
+  try {
+    const response = await axios.post('http://localhost:8000/getSlots/', {
+        doctorId: selectedDoctorId,
+      },
+      {withCredentials: true,
+    });
+    return response.data; 
+  } catch (error) {
+    console.error("Error fetching slots:", error.response ? error.response.data : error.message);
+    
+  }
+};
+  const handleDateChange=async (date)=>{
+setSelectedDate(date);
+const formattedDate = date.toISOString().split('T')[0]; 
+const slotData=await getSlots(doctorId)
+console.log(slotData)
+
+  }
 
   return (
     <Modal show={show} onHide={onClose} centered>
@@ -117,7 +137,7 @@ const AppointmentModal = ({ show, onClose, doctorId }) => {
             {/* Date Picker for selecting the date */}
             <DatePicker
               selected={selectedDate}
-              onChange={date => setSelectedDate(date)}
+              onChange={(e)=>handleDateChange(e)}
               dateFormat="yyyy-MM-dd"
               className="form-control"
               placeholderText="Select a date"

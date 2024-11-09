@@ -110,7 +110,7 @@ const Home = () => {
             console.log(response);
 
             // Uncomment below to set doctors with the response from backend once ready
-            // setDoctors(response.data);
+            setDoctors(response.data);
         } catch (error) {
             console.error('Error fetching doctor data:', error);
             // Optionally set an error state or handle it as needed
@@ -119,7 +119,7 @@ const Home = () => {
 
     useEffect(() => {
         // Uncomment below to use real backend data instead of dummy data
-        // fetchDoctorData();
+        fetchDoctorData();
     }, []);
 
     return (

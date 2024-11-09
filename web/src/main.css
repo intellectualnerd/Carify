@@ -188,9 +188,36 @@ body {
     border-radius: 8px;
     border: 1px solid var(--Carify-black);
 }
-
-
-
+.slotdiv{
+    margin: 5px 0;
+    position: relative;
+}
+.slotno{
+    padding: 10px 20px;
+    background-color: var(--Carify-blue);
+    border-radius: 8px;
+}
+.slotinfo{
+    padding: 20px ;
+    margin-top: 10px;
+    border-radius: 8px;
+    background-color: var(--Carify-gray);
+}
+.toggleappoint{
+    border: none;
+    height: 2rem;
+    width: 2rem;
+    margin-top: 10px;
+    border-radius: 50%;
+}
+.patient{
+    padding: 10px;
+    width: 100%;
+    background-color: var(--Carify-white);
+    border-radius: 6px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
 @media screen and (max-width: 1200px) {
 
 

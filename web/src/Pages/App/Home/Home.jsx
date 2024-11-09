@@ -102,7 +102,7 @@ const Home = () => {
         },
     ]);
 
-    const isDoctor = false;
+    const isDoctor = true;
 
     const fetchDoctorData = async () => {
         try {

@@ -1,11 +1,11 @@
 // Home.js
-import React,{useEffect,useState} from 'react';
-import { useNavigate ,Outlet} from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, Outlet } from 'react-router-dom';
 import doc_profile from './doctor.png';
 import user_profile from './patient.png';
 import Datatable from "../Components/Datatable";
 import axios from 'axios';
-
+import Patientnav from "../Components/patientnav"
 
 const Home = () => {
     const [doctors, setDoctors] = useState([
@@ -108,7 +108,7 @@ const Home = () => {
             // Send a GET request to the backend with credentials included
             const response = await axios.get('http://localhost:8000/getInfo/', { withCredentials: true });
             console.log(response);
-            
+
             // Uncomment below to set doctors with the response from backend once ready
             // setDoctors(response.data);
         } catch (error) {
@@ -143,8 +143,8 @@ const Home = () => {
                                     <a className="nav-link" href="/patient_info">Patients</a>
                                 </li>
                                 <li className="nav-item me-3">
-    <a className="nav-link" href="/assessment">Know Your Mental Health</a>
-</li>
+                                    <a className="nav-link" href="/assessment">Know Your Mental Health</a>
+                                </li>
 
                                 <li className="nav-item me-3">
                                     <a className="nav-link" href="/patient_info">Dashboard</a>
@@ -159,38 +159,10 @@ const Home = () => {
                     </div>
                 </nav>
             )}
-           <Outlet/>
+            <Outlet />
             {!isDoctor && (
                 <>
-                    <nav className="navbar navbar-expand-sm navbar-dark bg-myblue">
-                        <div className="container">
-                            <a className="navbar-brand mytitle" href="javascript:void(0)">Carify</a>
-                            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
-                                <span className="navbar-toggler-icon"></span>
-                            </button>
-                            <div className="collapse navbar-collapse" id="mynavbar">
-                                <ul className="navbar-nav ms-auto d-flex align-items-center">
-                                    <li className="nav-item me-3">
-                                        <a className="nav-link active" href="/">Appoint</a>
-                                    </li>
-                                    <li className="nav-item me-3">
-                                        <a className="nav-link" href="/patient_info">Mental-test</a>
-                                    </li>
-                                    <li className="nav-item me-3">
-                                        <a className="nav-link" href="/patient_info">Chatbot</a>
-                                    </li>
-                                    <li className="nav-item me-3">
-                                        <a className="nav-link" href="/patient_info">Report-analysis</a>
-                                    </li>
-                                    <li className="nav-item d-flex align-items-center">
-                                        <a className="nav-link" href="/profile">
-                                            <img src={user_profile} alt="Profile" height="40px" className="rounded-circle" />
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </nav>
+                    <Patientnav activeName="Appoint" />
                     <div className='container'>
                         <p className='mt-4 mytitle' style={{ color: "black" }}>Doctors:</p>
                         <Datatable doctors={doctors} />

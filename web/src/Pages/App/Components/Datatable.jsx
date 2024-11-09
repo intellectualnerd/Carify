@@ -5,6 +5,8 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
+import DatePicker from 'react-datepicker';  // Import DatePicker from react-datepicker
+import 'react-datepicker/dist/react-datepicker.css';  // Style for DatePicker
 
 // Set Axios default configuration for credentials
 axios.defaults.withCredentials = true;
@@ -66,18 +68,31 @@ const AppointmentModal = ({ show, onClose, doctorId }) => {
   const [slots, setSlots] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [description, setDescription] = useState('');
+  const [selectedDate, setSelectedDate] = useState(null);
 
   useEffect(() => {
-    if (show && doctorId) {
-      // Simulate fetching slots data
-      const dummySlots = [
-        { slot_no: 1, time_range: '10:00 AM - 10:30 AM', availability: true },
-        { slot_no: 2, time_range: '11:00 AM - 11:30 AM', availability: false },
-        { slot_no: 3, time_range: '12:00 PM - 12:30 PM', availability: true },
-      ];
-      setSlots(dummySlots);
+    if (show && doctorId && selectedDate) {
+      // Simulate sending backend request to fetch slots for selected date
+      const fetchSlots = async () => {
+        try {
+          // Example of API call to fetch slots (commented for now)
+          // const response = await axios.get(`/api/getSlots?doctorId=${doctorId}&date=${selectedDate}`);
+          // setSlots(response.data.slots);
+
+          // Simulating the response
+          const dummySlots = [
+            { slot_no: 1, time_range: '10:00 AM - 10:30 AM', availability: true },
+            { slot_no: 2, time_range: '11:00 AM - 11:30 AM', availability: false },
+            { slot_no: 3, time_range: '12:00 PM - 12:30 PM', availability: true },
+          ];
+          setSlots(dummySlots);
+        } catch (error) {
+          console.error("Error fetching slots:", error);
+        }
+      };
+      fetchSlots();
     }
-  }, [show, doctorId]);
+  }, [show, doctorId, selectedDate]);
 
   const handleConfirmAppointment = () => {
     if (!selectedSlot || !description) {
@@ -98,33 +113,51 @@ const AppointmentModal = ({ show, onClose, doctorId }) => {
       <Modal.Body>
         {doctorId ? (
           <>
-            <p>Select an available slot for Doctor ID: {doctorId}</p>
-            {Array.isArray(slots) && slots.length > 0 ? (
-              <Form>
-                {slots.map((slot) => (
-                  <Form.Check 
-                    key={slot.slot_no}
-                    type="radio"
-                    label={`${slot.time_range} - ${slot.availability ? 'Available' : 'Unavailable'}`}
-                    name="slot"
-                    value={slot.slot_no}
-                    disabled={!slot.availability}
-                    onChange={() => setSelectedSlot(slot.slot_no)}
-                  />
-                ))}
-                <Form.Group className="mt-3">
-                  <Form.Label>Description of Problem</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Describe your symptoms or concerns"
-                  />
-                </Form.Group>
-              </Form>
-            ) : (
-              <p>No available slots for this doctor.</p>
+            <p>Select a date for Doctor ID: {doctorId}</p>
+            {/* Date Picker for selecting the date */}
+            <DatePicker
+              selected={selectedDate}
+              onChange={date => setSelectedDate(date)}
+              dateFormat="yyyy-MM-dd"
+              className="form-control"
+              placeholderText="Select a date"
+            />
+            {selectedDate && (
+              <>
+                <p>Select an available slot for {doctorId} on {selectedDate.toLocaleDateString()}</p>
+                {Array.isArray(slots) && slots.length > 0 ? (
+                  <Form>
+                    {slots.map((slot) => (
+                      <Form.Check 
+                        key={slot.slot_no}
+                        type="radio"
+                        label={`${slot.time_range} - ${slot.availability ? 'Available' : 'Unavailable'}`}
+                        name="slot"
+                        value={slot.slot_no}
+                        disabled={!slot.availability}
+                        onChange={() => setSelectedSlot(slot.slot_no)}
+                        style={{
+                          backgroundColor: slot.availability ? 'green' : 'red',
+                          color: 'white',
+                          marginBottom: '10px',
+                        }}
+                      />
+                    ))}
+                    <Form.Group className="mt-3">
+                      <Form.Label>Description of Problem</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder="Describe your symptoms or concerns"
+                      />
+                    </Form.Group>
+                  </Form>
+                ) : (
+                  <p>No available slots for this doctor on the selected date.</p>
+                )}
+              </>
             )}
           </>
         ) : (

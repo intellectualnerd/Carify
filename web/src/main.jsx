@@ -21,7 +21,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import Login from "./Pages/App/Login/Login";
 import Signup from './Pages/App/Signup/Signup';
-
+import Chatbot from './Pages/App/Chatbot/Chatbot';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
@@ -38,12 +38,7 @@ const router = createBrowserRouter([
         path: "/",
         
         element: <Home />,
-        children:[
-          {
-        path: "/assessment",
-        element: <PHQ9Assessment />,
-      },
-        ]
+       
       },
       {
         path: "/login",
@@ -51,12 +46,20 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
+        path: "/mental-test",
+        element: <PHQ9Assessment />,
+      },
+      {
         path: "/signup",
         index: true,
         element: <Signup />,
       },
        
-
+      {
+        path: "/chatbot",
+        index: true,
+        element: <Chatbot />,
+      },
       {
         path: "*",
         element: <Error_404 />

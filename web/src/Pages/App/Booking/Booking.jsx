@@ -3,8 +3,32 @@ import axios from 'axios';
 import Doctornav from "../Components/doctornav";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
+import { useNavigate } from 'react-router-dom';
 const Booking = () => {
+    const navigate = useNavigate();
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        const checkCookies = () => {
+            const cookies = document.cookie.split('; ');
+            const email = cookies.find(cookie => cookie.startsWith('email='));
+            const role = cookies.find(cookie => cookie.startsWith('role='));
+            const password = cookies.find(cookie => cookie.startsWith('password='));
+
+            // Check if all necessary cookies exist
+            if (email && role && password) {
+                setIsAuthenticated(true);
+            } else {
+                navigate('/'); // Redirect to the home page
+            }
+        };
+
+        checkCookies();
+    }, [navigate]);
+
+    if (!isAuthenticated) {
+        return null; // Optionally, you can show a loading indicator here while checking cookies
+    }
     const doctorId = 101; // Set doctor ID as a constant
 
     const [slots, setSlots] = useState([]); // Initialize slots as an empty array

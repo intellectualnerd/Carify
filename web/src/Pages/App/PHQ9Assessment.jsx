@@ -1,7 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Patientnav from "../App/Components/patientnav";
 
 const PHQ9Assessment = () => {
+    const navigate = useNavigate();
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        const checkCookies = () => {
+            const cookies = document.cookie.split('; ');
+            const email = cookies.find(cookie => cookie.startsWith('email='));
+            const role = cookies.find(cookie => cookie.startsWith('role='));
+            const password = cookies.find(cookie => cookie.startsWith('password='));
+
+            // Check if all necessary cookies exist
+            if (email && role && password) {
+                setIsAuthenticated(true);
+            } else {
+                navigate('/login'); // Redirect to the home page
+            }
+        };
+
+        checkCookies();
+    }, [navigate]);
+
+    if (!isAuthenticated) {
+        return null; // Optionally, you can show a loading indicator here while checking cookies
+    }
     const questions = [
         "Little interest or pleasure in doing things",
         "Feeling down, depressed, or hopeless",
@@ -148,73 +173,81 @@ const PHQ9Assessment = () => {
             default:
                 return [];
         }
-        
-};
 
-const generateReport = () => {
-    const results = calculateScore();
-    const recommendations = generateRecommendations(results.severity);
-    const exercises = generateExerciseVideos(results.severity);
+    };
 
-    return (
-        <div className="mt-4">
-            <div className="card shadow-lg">
-                <div className="card-header bg-info text-white text-center">
-                    <h4>Assessment Results</h4>
+    const generateReport = () => {
+        const results = calculateScore();
+        const recommendations = generateRecommendations(results.severity);
+        const exercises = generateExerciseVideos(results.severity);
+
+        return (
+            <div className="mt-4">
+                <div className="card shadow-lg">
+                    <div className="card-header bg-info text-white text-center">
+                        <h4>Assessment Results</h4>
+                    </div>
+                    <div className="card-body">
+                        <p className="text-center"><strong>Total Score:</strong> {results.totalScore}</p>
+                        <p className="text-center"><strong>Severity Level:</strong> {results.severity}</p>
+                        <p className="text-center"><strong>Functional Difficulty:</strong> {results.difficultyLevel}</p>
+                    </div>
                 </div>
-                <div className="card-body">
-                    <p className="text-center"><strong>Total Score:</strong> {results.totalScore}</p>
-                    <p className="text-center"><strong>Severity Level:</strong> {results.severity}</p>
-                    <p className="text-center"><strong>Functional Difficulty:</strong> {results.difficultyLevel}</p>
+                <div className="card mt-4 shadow-lg">
+                    <div className="card-header bg-success text-white text-center">
+                        <h4>Personalized Recommendations</h4>
+                    </div>
+                    <div className="card-body">
+                        <ul>
+                            {recommendations.map((tip, index) => (
+                                <li key={index} className="mb-2">{tip}</li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+                <div className="card mt-4 shadow-lg">
+                    <div className="card-header bg-primary text-white text-center">
+                        <h4>Exercise Videos</h4>
+                    </div>
+                    <div className="card-body">
+                        <ul>
+                            {exercises.map((exercise, index) => (
+                                <li key={index} className="mb-3">
+                                    <strong>{exercise.title}</strong>
+                                    <div className="responsive-iframe-wrapper">
+                                        <iframe
+                                            className="responsive-iframe"
+                                            src={exercise.link}
+                                            title={exercise.title}
+                                            allowFullScreen
+                                        ></iframe>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+
+                <a href="/chatbot" className='nav-link'>
+                    <div className='p-3 bg-myblue mt-4 rounded' style={{ cursor: "pointer" }}>
+                        <span className='mytitle'>consult online chatbuddy 🔗</span>
+                    </div>
+                </a>
+
+                <div className="text-center mt-4">
+                    <small>
+                        Note: This is a screening tool, not a diagnostic instrument. For accurate diagnosis and support, please consult a mental health professional.
+                    </small>
                 </div>
             </div>
-            <div className="card mt-4 shadow-lg">
-                <div className="card-header bg-success text-white text-center">
-                    <h4>Personalized Recommendations</h4>
-                </div>
-                <div className="card-body">
-                    <ul>
-                        {recommendations.map((tip, index) => (
-                            <li key={index} className="mb-2">{tip}</li>
-                        ))}
-                    </ul>
-                </div>
-            </div>
-            <div className="card mt-4 shadow-lg">
-                <div className="card-header bg-primary text-white text-center">
-                    <h4>Exercise Videos</h4>
-                </div>
-                <div className="card-body">
-                    <ul>
-                        {exercises.map((exercise, index) => (
-                            <li key={index} className="mb-3">
-                                <strong>{exercise.title}</strong>
-                                <div className="embed-responsive embed-responsive-16by9">
-                                    <iframe
-                                        className="embed-responsive-item"
-                                        src={exercise.link}
-                                        title={exercise.title}
-                                        allowFullScreen
-                                    ></iframe>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </div>
-            <div className="text-center mt-4">
-                <small>
-                    Note: This is a screening tool, not a diagnostic instrument. For accurate diagnosis and support, please consult a mental health professional.
-                </small>
-            </div>
-        </div>
-    );
-};
+        );
+    };
+
 
 
     return (
         <>
-            <Patientnav activeName="Mental-test" />
+            <Patientnav activeName="Mental-Test" />
             <div className="container my-5">
                 <h2 className="mb-4 text-center">PHQ-9 Assessment</h2>
                 <p className="text-center mb-4">Over the last 2 weeks, how often have you been bothered by any of the following problems?</p>
@@ -262,6 +295,8 @@ const generateReport = () => {
 
                 {showResults && generateReport()}
             </div>
+
+
         </>
     );
 };

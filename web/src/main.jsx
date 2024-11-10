@@ -29,7 +29,7 @@ import Profle from './Pages/App/Profile/Profile'
 import Schedule from './Pages/App/Schedule/Schecule';
 import Dashboard from './Pages/App/Dashboard/Dashboard';
 import Booking from './Pages/App/Booking/Booking';
-
+import DoctorProfile from './Pages/App/DoctorProfile/DocProfile';
 // router and routes
 const router = createBrowserRouter([
   {
@@ -79,6 +79,10 @@ const router = createBrowserRouter([
       {
         path: "/booking",
         element: <Booking />,
+      },
+      {
+        path: "/profile/doctor",
+        element: <DoctorProfile />,
       },
       {
         path: "*",

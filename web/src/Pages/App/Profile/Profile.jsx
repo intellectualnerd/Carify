@@ -1,14 +1,42 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // For redirecting to login after logout
 import Patientnav from "../Components/patientnav";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
+import Cookies from 'js-cookie'; // For handling cookies
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const PatientProfile = () => {
+    const navigate = useNavigate();
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        const checkCookies = () => {
+            const cookies = document.cookie.split('; ');
+            const email = cookies.find(cookie => cookie.startsWith('email='));
+            const role = cookies.find(cookie => cookie.startsWith('role='));
+            const password = cookies.find(cookie => cookie.startsWith('password='));
+
+            // Check if all necessary cookies exist
+            if (email && role && password) {
+                setIsAuthenticated(true);
+            } else {
+                navigate('/'); // Redirect to the home page
+            }
+        };
+
+        checkCookies();
+    }, [navigate]);
+
+    if (!isAuthenticated) {
+        return null; // Optionally, you can show a loading indicator here while checking cookies
+    }
+    
+
     const [patient, setPatient] = useState({
         pid: "P12345",
         name: "John Doe",
@@ -59,7 +87,6 @@ const PatientProfile = () => {
             },
         })
         .then(response => {
-            // Update the reports state with the new report if upload is successful
             setReports([...reports, { pid: patient.pid, did: response.data.did, link: response.data.link }]);
             setUploadStatus("File uploaded successfully.");
         })
@@ -86,7 +113,7 @@ const PatientProfile = () => {
 
     // Dummy data for the graph
     const months = ["Sep", "Oct", "Nov", "Dec"];
-    const scores = [20,8,10,2]; // Random scores between 0 and 27
+    const scores = [20, 8, 10, 2];
 
     // Chart.js data configuration
     const data = {
@@ -135,11 +162,25 @@ const PatientProfile = () => {
         },
     };
 
+    const handleLogout = () => {
+        // Clear cookies for email, password, and role
+        Cookies.remove("email");
+        Cookies.remove("password");
+        Cookies.remove("role");
+
+        // Redirect to login page
+        navigate("/login");
+    };
+
     return (
         <>
             <Patientnav activeName="Profile" />
             <div className="container mt-4">
                 <h2 className="mb-4">Patient Profile</h2>
+
+                <button className="btn btn-danger mb-4" onClick={handleLogout}>
+                    Logout
+                </button>
 
                 {/* Patient Information Card */}
                 <div className="card mb-4">
@@ -219,7 +260,7 @@ const PatientProfile = () => {
                 {/* Chart Section */}
                 <div className="card mb-4">
                     <div className="card-body">
-                        <h4 className="card-title">Monthly Scores Graph</h4>
+                        <h4 className="card-title">Monthly Health Scores</h4>
                         <Line data={data} options={options} />
                     </div>
                 </div>

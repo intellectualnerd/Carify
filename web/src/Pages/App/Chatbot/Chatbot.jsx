@@ -1,8 +1,32 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import axios from "axios";
 import Patientnav from "../Components/patientnav";
-
+import { useNavigate } from "react-router-dom";
 const Chatbot = () => {
+    const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkCookies = () => {
+      const cookies = document.cookie.split('; ');
+      const email = cookies.find(cookie => cookie.startsWith('email='));
+      const role = cookies.find(cookie => cookie.startsWith('role='));
+      const password = cookies.find(cookie => cookie.startsWith('password='));
+
+      // Check if all necessary cookies exist
+      if (email && role && password) {
+        setIsAuthenticated(true);
+      } else {
+        navigate('/login'); // Redirect to the home page
+      }
+    };
+
+    checkCookies();
+  }, [navigate]);
+
+  if (!isAuthenticated) {
+    return null; // Optionally, you can show a loading indicator here while checking cookies
+  }
     const [inputText, setInputText] = useState("");
     const [chatHistory, setChatHistory] = useState([
         { sender: "bot", message: "Hi, I am your consultant for today. Can you tell me how you feel today so I can help you further in life." }

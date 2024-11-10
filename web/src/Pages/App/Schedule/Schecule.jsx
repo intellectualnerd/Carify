@@ -1,8 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DoctorNav from "../Components/doctornav";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import { useNavigate } from 'react-router-dom';
 const Schedule = () => {
+    const navigate = useNavigate();
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        const checkCookies = () => {
+            const cookies = document.cookie.split('; ');
+            const email = cookies.find(cookie => cookie.startsWith('email='));
+            const role = cookies.find(cookie => cookie.startsWith('role='));
+            const password = cookies.find(cookie => cookie.startsWith('password='));
+
+            // Check if all necessary cookies exist
+            if (email && role && password) {
+                setIsAuthenticated(true);
+            } else {
+                navigate('/'); // Redirect to the home page
+            }
+        };
+
+        checkCookies();
+    }, [navigate]);
+
+    if (!isAuthenticated) {
+        return null; // Optionally, you can show a loading indicator here while checking cookies
+    }
     // State to hold slots data
     const [slots, setSlots] = useState([
         { slot_no: 1, time_range: '9:00 AM - 10:00 AM', max_patient: 10, status: 'present' },
@@ -60,7 +84,7 @@ const Schedule = () => {
             return;
         }
 
-        const updatedSlots = slots.map(slot => 
+        const updatedSlots = slots.map(slot =>
             slot.slot_no === slotNo
                 ? { ...slot, time_range: timeRange, max_patient: parseInt(maxPatient), status: status }
                 : slot
@@ -87,23 +111,23 @@ const Schedule = () => {
 
     // Convert time range to minutes for sorting
     // Convert time range to minutes for sorting with validation
-const timeToMinutes = (time) => {
-    const [hours, minutes] = time.split(':');
+    const timeToMinutes = (time) => {
+        const [hours, minutes] = time.split(':');
 
-    // Check if the hour is within a valid range (0 to 23)
-    if (parseInt(hours) > 23 || parseInt(hours) < 0) {
-        alert("Invalid time: hours must be between 00 and 23");
-        return 0;  // Return a fallback value
-    }
+        // Check if the hour is within a valid range (0 to 23)
+        if (parseInt(hours) > 23 || parseInt(hours) < 0) {
+            alert("Invalid time: hours must be between 00 and 23");
+            return 0;  // Return a fallback value
+        }
 
-    // Handle if minutes exceed 60
-    if (parseInt(minutes) >= 60 || parseInt(minutes) < 0) {
-        alert("Invalid time: minutes must be between 00 and 59");
-        return 0;  // Return a fallback value
-    }
+        // Handle if minutes exceed 60
+        if (parseInt(minutes) >= 60 || parseInt(minutes) < 0) {
+            alert("Invalid time: minutes must be between 00 and 59");
+            return 0;  // Return a fallback value
+        }
 
-    return parseInt(hours) * 60 + parseInt(minutes);
-};
+        return parseInt(hours) * 60 + parseInt(minutes);
+    };
 
 
     return (

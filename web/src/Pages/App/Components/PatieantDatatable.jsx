@@ -172,7 +172,6 @@ const doctorsData = [
 const App = () => {
   return (
     <div>
-      <h1>Doctor and Patient History</h1>
       <DoctorTable doctors={doctorsData} />
     </div>
   );

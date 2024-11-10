@@ -1,9 +1,33 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Patientnav from "../Components/patientnav";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
-
+import { useNavigate } from 'react-router-dom';
 const ReportAnalysis = () => {
+    const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkCookies = () => {
+      const cookies = document.cookie.split('; ');
+      const email = cookies.find(cookie => cookie.startsWith('email='));
+      const role = cookies.find(cookie => cookie.startsWith('role='));
+      const password = cookies.find(cookie => cookie.startsWith('password='));
+
+      // Check if all necessary cookies exist
+      if (email && role && password) {
+        setIsAuthenticated(true);
+      } else {
+        navigate('/login'); // Redirect to the home page
+      }
+    };
+
+    checkCookies();
+  }, [navigate]);
+
+  if (!isAuthenticated) {
+    return null; // Optionally, you can show a loading indicator here while checking cookies
+  }
     const [file, setFile] = useState(null);
     const [analysisResult, setAnalysisResult] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -70,7 +94,7 @@ if (localStorage.getItem("analysis")){
 
     return (
      <>
-    <Patientnav activeName="Report-analysis" />
+    <Patientnav activeName="Report-Analysis" />
     <div className="container mt-3">
         <h2 className="mb-3">Report Analysis</h2>
 

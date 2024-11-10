@@ -1,14 +1,37 @@
 // Home.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
-import doc_profile from './doctor.png';
-import user_profile from './patient.png';
 import Datatable from "../Components/Datatable";
 import axios from 'axios';
 import Patientnav from "../Components/patientnav";
 import Doctornav from "../Components/doctornav";
 import PatientTable from '../Components/PatieantDatatable';
+
 const Home = () => {
+    const navigate = useNavigate();
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        const checkCookies = () => {
+            const cookies = document.cookie.split('; ');
+            const email = cookies.find(cookie => cookie.startsWith('email='));
+            const role = cookies.find(cookie => cookie.startsWith('role='));
+            const password = cookies.find(cookie => cookie.startsWith('password='));
+
+            // Check if all necessary cookies exist
+            if (email && role && password) {
+                setIsAuthenticated(true);
+            } else {
+                navigate('/login'); // Redirect to the home page
+            }
+        };
+
+        checkCookies();
+    }, [navigate]);
+
+    if (!isAuthenticated) {
+        return null; // Optionally, you can show a loading indicator here while checking cookies
+    }
     const [doctors, setDoctors] = useState([
         {
             did: 1,
@@ -102,7 +125,7 @@ const Home = () => {
         },
     ]);
 
-    const isDoctor = true;
+    const isDoctor = false;
 
     const fetchDoctorData = async () => {
         try {
@@ -127,11 +150,11 @@ const Home = () => {
         <>
             {isDoctor && (
                 <>
-                <Doctornav activeName="Patients"/>
-                <div className='container mt-2'>
-                <p className='mt-4 mytitle' style={{ color: "black" }}>Patients:</p>
-                <PatientTable />
-                </div>
+                    <Doctornav activeName="Patients" />
+                    <div className='container mt-2'>
+                        <p className='mt-4 mytitle' style={{ color: "black" }}>Patients:</p>
+                        <PatientTable />
+                    </div>
                 </>
             )}
             <Outlet />

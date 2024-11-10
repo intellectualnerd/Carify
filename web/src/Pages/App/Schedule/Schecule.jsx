@@ -1,32 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import DoctorNav from "../Components/doctornav";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useNavigate } from 'react-router-dom';
+
 const Schedule = () => {
-    const navigate = useNavigate();
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-    useEffect(() => {
-        const checkCookies = () => {
-            const cookies = document.cookie.split('; ');
-            const email = cookies.find(cookie => cookie.startsWith('email='));
-            const role = cookies.find(cookie => cookie.startsWith('role='));
-            const password = cookies.find(cookie => cookie.startsWith('password='));
-
-            // Check if all necessary cookies exist
-            if (email && role && password) {
-                setIsAuthenticated(true);
-            } else {
-                navigate('/'); // Redirect to the home page
-            }
-        };
-
-        checkCookies();
-    }, [navigate]);
-
-    if (!isAuthenticated) {
-        return null; // Optionally, you can show a loading indicator here while checking cookies
-    }
+    
     // State to hold slots data
     const [slots, setSlots] = useState([
         { slot_no: 1, time_range: '9:00 AM - 10:00 AM', max_patient: 10, status: 'present' },

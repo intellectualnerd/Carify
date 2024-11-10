@@ -1,32 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import Patientnav from "../App/Components/patientnav";
 
 const PHQ9Assessment = () => {
-    const navigate = useNavigate();
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-    useEffect(() => {
-        const checkCookies = () => {
-            const cookies = document.cookie.split('; ');
-            const email = cookies.find(cookie => cookie.startsWith('email='));
-            const role = cookies.find(cookie => cookie.startsWith('role='));
-            const password = cookies.find(cookie => cookie.startsWith('password='));
-
-            // Check if all necessary cookies exist
-            if (email && role && password) {
-                setIsAuthenticated(true);
-            } else {
-                navigate('/login'); // Redirect to the home page
-            }
-        };
-
-        checkCookies();
-    }, [navigate]);
-
-    if (!isAuthenticated) {
-        return null; // Optionally, you can show a loading indicator here while checking cookies
-    }
+    
     const questions = [
         "Little interest or pleasure in doing things",
         "Feeling down, depressed, or hopeless",

@@ -8,7 +8,12 @@ import { useNavigate } from 'react-router-dom';
 
 const DoctorProfile = () => {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  // Authentication State
+  const [isAuthenticated, setIsAuthenticated] = useState(null);  // Start with null to check during the first render
+
+  // Doctor Data State
+  const [doctor, setDoctor] = useState(null);
 
   useEffect(() => {
     const checkCookies = () => {
@@ -19,43 +24,40 @@ const DoctorProfile = () => {
 
       // Check if all necessary cookies exist
       if (email && role && password) {
-        setIsAuthenticated(true);
+        setIsAuthenticated(true);  // Set authentication to true if cookies are present
       } else {
-        navigate('/'); // Redirect to the home page
+        setIsAuthenticated(false);  // Set authentication to false if not authenticated
       }
     };
 
     checkCookies();
-  }, [navigate]);
-
-  if (!isAuthenticated) {
-    return null; // Optionally, you can show a loading indicator here while checking cookies
-  }
-  const [doctor, setDoctor] = useState(null);
-
-
+  }, []);  // Run only on component mount
+  
   useEffect(() => {
-    // Use Axios to fetch doctor data from a URL
-    // axios.get('https://api.example.com/doctor-profile')
-    //   .then(response => {
-    //     setDoctor(response.data);
-    //   })
-    //   .catch(error => {
-    //     console.error("Error fetching doctor data:", error);
-    //   });
+    // Fetch doctor data once authenticated
+    if (isAuthenticated) {
+      // Example API call to fetch doctor data (replace with actual API URL)
+      axios.get('https://api.example.com/doctor-profile')
+        .then(response => {
+          setDoctor(response.data);
+        })
+        .catch(error => {
+          console.error("Error fetching doctor data:", error);
+        });
 
-    // Dummy data to use for now
-    const dummyDoctorData = {
-      did: 1,
-      name: "Dr. John Smith",
-      phone_no: "1234567890",
-      location: "New York, NY",
-      experience: 15,
-      speciality: "Cardiology",
-      email: "johnsmith@example.com"
-    };
-    setDoctor(dummyDoctorData);
-  }, []);
+      // Dummy data to use for now
+      const dummyDoctorData = {
+        did: 1,
+        name: "Dr. John Smith",
+        phone_no: "1234567890",
+        location: "New York, NY",
+        experience: 15,
+        speciality: "Cardiology",
+        email: "johnsmith@example.com"
+      };
+      setDoctor(dummyDoctorData);
+    }
+  }, [isAuthenticated]); // Run when `isAuthenticated` changes
 
   const handleLogout = () => {
     // Remove cookies for email, password, and role
@@ -67,8 +69,20 @@ const DoctorProfile = () => {
     navigate('/login');
   };
 
+  // If authentication is still being checked, show loading
+  if (isAuthenticated === null) {
+    return <div>Loading...</div>;
+  }
+
+  // If not authenticated, redirect to home page
+  if (!isAuthenticated) {
+    navigate('/');
+    return null;
+  }
+
+  // Display loading message until doctor data is available
   if (!doctor) {
-    return <div>Loading...</div>; // Display loading while data is fetched
+    return <div>Loading doctor data...</div>;
   }
 
   return (

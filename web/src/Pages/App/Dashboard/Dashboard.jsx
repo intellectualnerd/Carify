@@ -12,7 +12,13 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 const Dashboard = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [patientsBookings, setPatientsBookings] = useState([]);
+  const [reports, setReports] = useState([]);
+  const [reportSummary, setReportSummary] = useState([]);
+  const [totalBookings, setTotalBookings] = useState(0);
+  const [statusCount, setStatusCount] = useState({ appointed: 0, cancelled: 0, rejected: 0 });
 
+  // Ensure authentication is checked first
   useEffect(() => {
     const checkCookies = () => {
       const cookies = document.cookie.split('; ');
@@ -24,57 +30,53 @@ const Dashboard = () => {
       if (email && role && password) {
         setIsAuthenticated(true);
       } else {
-        navigate('/'); // Redirect to the home page
+        navigate('/'); // Redirect to the home page if not authenticated
       }
     };
 
     checkCookies();
   }, [navigate]);
 
-  if (!isAuthenticated) {
-    return null; // Optionally, you can show a loading indicator here while checking cookies
-  }
-  const [patientsBookings, setPatientsBookings] = useState([]);
-  const [reports, setReports] = useState([]);
-  const [reportSummary, setReportSummary] = useState([]);
-
-  const [totalBookings, setTotalBookings] = useState(0);
-  const [statusCount, setStatusCount] = useState({ appointed: 0, cancelled: 0, rejected: 0 });
-
+  // Fetch data only if authenticated
   useEffect(() => {
-    setPatientsBookings([
-      { did: 1, pid: 101, sid: 5, date: '2024-11-01', status: 'appointed' },
-      { did: 2, pid: 102, sid: 6, date: '2024-11-02', status: 'cancelled' },
-      { did: 1, pid: 103, sid: 7, date: '2024-11-03', status: 'appointed' },
-      { did: 1, pid: 104, sid: 8, date: '2024-11-01', status: 'rejected' },
-    ]);
-    setReports([
-      { pid: 101, did: 1, link: 'https://example.com/report/101' },
-      { pid: 102, did: 2, link: 'https://example.com/report/102' },
-      { pid: 103, did: 1, link: 'https://example.com/report/103' },
-    ]);
-  }, []);
+    if (isAuthenticated) {
+      setPatientsBookings([
+        { did: 1, pid: 101, sid: 5, date: '2024-11-01', status: 'appointed' },
+        { did: 2, pid: 102, sid: 6, date: '2024-11-02', status: 'cancelled' },
+        { did: 1, pid: 103, sid: 7, date: '2024-11-03', status: 'appointed' },
+        { did: 1, pid: 104, sid: 8, date: '2024-11-01', status: 'rejected' },
+      ]);
+      setReports([
+        { pid: 101, did: 1, link: 'https://example.com/report/101' },
+        { pid: 102, did: 2, link: 'https://example.com/report/102' },
+        { pid: 103, did: 1, link: 'https://example.com/report/103' },
+      ]);
+    }
+  }, [isAuthenticated]);
 
+  // Update status count and report summary when data changes
   useEffect(() => {
-    setTotalBookings(patientsBookings.length);
+    if (patientsBookings.length > 0) {
+      setTotalBookings(patientsBookings.length);
 
-    const statusObj = { appointed: 0, cancelled: 0, rejected: 0 };
-    patientsBookings.forEach(booking => {
-      statusObj[booking.status]++;
-    });
-    setStatusCount(statusObj);
+      const statusObj = { appointed: 0, cancelled: 0, rejected: 0 };
+      patientsBookings.forEach(booking => {
+        statusObj[booking.status]++;
+      });
+      setStatusCount(statusObj);
 
-    // Summarize reports by patient ID
-    const summary = reports.reduce((acc, report) => {
-      const patientIndex = acc.findIndex(r => r.pid === report.pid);
-      if (patientIndex !== -1) {
-        acc[patientIndex].reportCount += 1;
-      } else {
-        acc.push({ pid: report.pid, reportCount: 1 });
-      }
-      return acc;
-    }, []);
-    setReportSummary(summary);
+      // Summarize reports by patient ID
+      const summary = reports.reduce((acc, report) => {
+        const patientIndex = acc.findIndex(r => r.pid === report.pid);
+        if (patientIndex !== -1) {
+          acc[patientIndex].reportCount += 1;
+        } else {
+          acc.push({ pid: report.pid, reportCount: 1 });
+        }
+        return acc;
+      }, []);
+      setReportSummary(summary);
+    }
   }, [patientsBookings, reports]);
 
   const bookingChartData = {
@@ -102,6 +104,10 @@ const Dashboard = () => {
       },
     ],
   };
+
+  if (!isAuthenticated) {
+    return null; // You could show a loading indicator here
+  }
 
   return (
     <>

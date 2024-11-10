@@ -1,42 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // For redirecting to login after logout
+import { useNavigate } from "react-router-dom";
 import Patientnav from "../Components/patientnav";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
-import Cookies from 'js-cookie'; // For handling cookies
+import Cookies from 'js-cookie';
 
-// Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const PatientProfile = () => {
     const navigate = useNavigate();
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    useEffect(() => {
-        const checkCookies = () => {
-            const cookies = document.cookie.split('; ');
-            const email = cookies.find(cookie => cookie.startsWith('email='));
-            const role = cookies.find(cookie => cookie.startsWith('role='));
-            const password = cookies.find(cookie => cookie.startsWith('password='));
-
-            // Check if all necessary cookies exist
-            if (email && role && password) {
-                setIsAuthenticated(true);
-            } else {
-                navigate('/'); // Redirect to the home page
-            }
-        };
-
-        checkCookies();
-    }, [navigate]);
-
-    if (!isAuthenticated) {
-        return null; // Optionally, you can show a loading indicator here while checking cookies
-    }
-    
-
+    const [isAuthenticated, setIsAuthenticated] = useState(null); // Initialize as null for loading state
     const [patient, setPatient] = useState({
         pid: "P12345",
         name: "John Doe",
@@ -65,6 +41,33 @@ const PatientProfile = () => {
 
     const [selectedFile, setSelectedFile] = useState(null);
     const [uploadStatus, setUploadStatus] = useState(null);
+
+    // This will run once when the component mounts to check cookies
+    useEffect(() => {
+        const checkCookies = () => {
+            const cookies = document.cookie.split('; ');
+            const email = cookies.find(cookie => cookie.startsWith('email='));
+            const role = cookies.find(cookie => cookie.startsWith('role='));
+            const password = cookies.find(cookie => cookie.startsWith('password='));
+
+            if (email && role && password) {
+                setIsAuthenticated(true);
+            } else {
+                setIsAuthenticated(false);
+                navigate('/'); // Redirect to home if not authenticated
+            }
+        };
+
+        checkCookies();
+    }, [navigate]); // Empty dependencies array ensures it only runs once
+
+    if (isAuthenticated === null) {
+        return <div>Loading...</div>; // Optional: You can show a loading indicator while checking cookies
+    }
+
+    if (!isAuthenticated) {
+        return null; // You can render a different component or message here
+    }
 
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -97,7 +100,6 @@ const PatientProfile = () => {
         */
     };
 
-    // Function to determine Bootstrap label color based on status
     const getStatusClass = (status) => {
         switch (status) {
             case "Appointed":
@@ -111,11 +113,9 @@ const PatientProfile = () => {
         }
     };
 
-    // Dummy data for the graph
     const months = ["Sep", "Oct", "Nov", "Dec"];
     const scores = [20, 8, 10, 2];
 
-    // Chart.js data configuration
     const data = {
         labels: months,
         datasets: [
@@ -163,12 +163,9 @@ const PatientProfile = () => {
     };
 
     const handleLogout = () => {
-        // Clear cookies for email, password, and role
         Cookies.remove("email");
         Cookies.remove("password");
         Cookies.remove("role");
-
-        // Redirect to login page
         navigate("/login");
     };
 
@@ -182,7 +179,6 @@ const PatientProfile = () => {
                     Logout
                 </button>
 
-                {/* Patient Information Card */}
                 <div className="card mb-4">
                     <div className="card-body">
                         <h4 className="card-title">Patient Information</h4>
@@ -198,7 +194,6 @@ const PatientProfile = () => {
                     </div>
                 </div>
 
-                {/* File Upload Section */}
                 <div className="card mb-4">
                     <div className="card-body">
                         <h4 className="card-title">Upload Medical Report</h4>
@@ -221,16 +216,14 @@ const PatientProfile = () => {
                     </div>
                 </div>
 
-                {/* Reports Section */}
                 <div className="card mb-4">
                     <div className="card-body">
                         <h4 className="card-title">Patient Reports</h4>
                         <ul className="list-group list-group-flush">
                             {reports.map((report, index) => (
-                                <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                                    <span><strong>Report ID:</strong> {report.did}</span>
-                                    <a href={report.link} target="_blank" rel="noopener noreferrer" className="btn btn-link">
-                                        View Report
+                                <li className="list-group-item" key={index}>
+                                    <a href={report.link} target="_blank" rel="noopener noreferrer">
+                                        Report {index + 1}
                                     </a>
                                 </li>
                             ))}
@@ -238,29 +231,23 @@ const PatientProfile = () => {
                     </div>
                 </div>
 
-                {/* Medical History Section */}
                 <div className="card mb-4">
                     <div className="card-body">
                         <h4 className="card-title">Medical History</h4>
                         <ul className="list-group list-group-flush">
-                            {medicalHistory.map((record, index) => (
-                                <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong>Doctor ID:</strong> {record.did} <br />
-                                        <strong>Session ID:</strong> {record.sid} <br />
-                                        <strong>Date:</strong> {record.date}
-                                    </div>
-                                    <span className={getStatusClass(record.status)}>{record.status}</span>
+                            {medicalHistory.map((history, index) => (
+                                <li className="list-group-item" key={index}>
+                                    <strong>Doctor ID:</strong> {history.did} - <strong>Status:</strong>{" "}
+                                    <span className={getStatusClass(history.status)}>{history.status}</span>
                                 </li>
                             ))}
                         </ul>
                     </div>
                 </div>
 
-                {/* Chart Section */}
                 <div className="card mb-4">
                     <div className="card-body">
-                        <h4 className="card-title">Monthly Health Scores</h4>
+                        <h4 className="card-title">Monthly Scores</h4>
                         <Line data={data} options={options} />
                     </div>
                 </div>
